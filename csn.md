@@ -62,8 +62,7 @@ Rules:
   * Instance (Data)
 * All 'Type' and 'Array' records must the defined before they are used in an other Type, Array or Instance records.
 * The first two fields of each record are special as they provide more meaningful information about the record.
-  * The first field indicates the type of that record. This field is called the Record Code.
-    * A Record Code consists of an Alphabetic character followed by a sequence number.
+  * The first field indicates the type of that record. This field is called the Record Code. It consists of an alphabetic code followed by a Sequence Number.
   * The second field contains information specific to the record itself. More information about this field will be specified with each record type.
 
 #### Version Record
@@ -76,7 +75,11 @@ V0,'1.0.0'
 ```
 
 Rules:
-*
+* A Version Record is the first record of the Payload.
+* A Version Record contains exactly 2 fields.
+  * The first field, which is the Record Code, is always "V0".
+  * The second field states the version of the CSN specification.
+* There can be only one Version Record in a Payload.
 
 #### TypeDef Record
 
@@ -84,6 +87,7 @@ Rules:
 
 Eg:
 ```
+V0,'1.0.0'
 T1,'Person','FirstName','LastName'
 ```
 
@@ -94,12 +98,13 @@ Rules:
 * A Type must contain at least one member. There is no value of a Type with no members.
 * The Type name (second field) as well its members (remaining fields) are all considered of type 'string'.
 
-#### Array Record
+#### ArrayDef Record
 
-**An Array is a set of values of the same type.**
+**An Array is a set of values of the same type. An ArrayDef Record indicates an array type.**
 
 Eg:
 ```
+V0,'1.0.0'
 T1,'Person','FirstName','LastName'
 A2,'Numbers',TI
 ```
@@ -117,6 +122,7 @@ Rules:
 
 Eg:
 ```
+V0,'1.0.0'
 T1,'Person','FirstName','LastName'
 A2,'Numbers',TI
 I3,T1,'1','1'
@@ -130,17 +136,73 @@ Rules:
   * If it is an instance of a Type (i.e. TypeDef record), the sequence of data fields must be as per the sequence of members in the corresponding TypeDef record. Effectively, such an Instance has the same number of fields as the TypeDef record of which it is an instance.
   * If it is an instance of an Array (i.e. ArrayDef record), the data fields must be of the same type as specified in the ArrayDef record. There is no limit on the number of data fields in an Array Instance.
 
-### Sequence Number
+### Record Codes
 
-**Sequence Number is a mechanism used in CSN to create unique identifiers for records within a Payload.**
+**As described above, a Record Code is a unique identifier for the Record.**
 
-#### Type Sequence
+It consists of 2 parts:
+* An alphabetic code which identifies the type of record.
+* A Sequence Number, which is a unique identifier.
 
-#### Instance Sequence
+#### Alphabetic Codes
+
+**The alphabetic codes reveal the type of record.**
+
+Following are the allowed alphabetic codes:
+| Alphabet | Description |
+| --- | --- |
+| V | Version |
+| T | TypeDef |
+| A | ArrayDef |
+| I | Instance |
+| P | Primitive Types |
+
+#### Sequence Number
+
+**Sequence Number is a mechanism used in CSN to create unique identifiers for each record within a Payload.**
+
+Eg:
+```
+V0,'1.0.0'
+T1,'Person','FirstName','LastName'
+A2,'Numbers',PI
+I3,T1,'1','1'
+I4,T1,'2','2'
+I5,A2,100,200
+```
+
+Rules:
+* Sequence Numbers are integers.
+* Sequence Numbers start with 0, then increment by 1 for each successive record.
+* The Sequence Number of a Record by itself can be a unique identifier (without the alphabetic code).
 
 ### Field
 
+**A Field is the smallest unit of data/ information in a Payload.**
+
+A Field can contain 2 types of values:
+* a data value expressed as one of the primitive types, OR
+* a reference to an Instance, a TypeDef or an ArrayDef Record.
+
+Eg:
+```
+```
+
+Both Primitive Type and References define an explicit set of rules, described in the next section.
+
 #### Primitive Types
 
+* Fields which contain a value of one of the Primitive Types can not contain a 'comma' or a 'new line' character, except for the string type. Additional rules for each Primitive Type are given later in the document.
+
+##### String
+
+##### Boolean
+
+##### Floating Point Number
+
+##### Integer
+
 #### Reference
+
+* Fields which point to another record must do so by referring to the Sequence Number of such record, prefixed with the '#' character.
 
