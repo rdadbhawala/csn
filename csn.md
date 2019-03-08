@@ -4,13 +4,19 @@ This document is the specification for Comma Separated Notation.
 
 ## Introduction
 
-The Comma Separated Notation (CSN) is a format for exchanging structured data. The format itself is strongly influenced by the Comma Separated Values (CSV) format but the specification adds enhancements to support type definitions, instances, arrays and references. CSN is also optimized for size, generation and parsing especially for larger data sets.
+The Comma Separated Notation (CSN) is a format for exchanging structured data between systems. The notation is strongly influenced by the Comma Separated Values (CSV) format but the specification adds enhancements to support multiple types, instances, arrays and references. CSN is also optimized for size, generation and parsing especially for larger data sets.
 
 ### Versioning
 
 The CSN Specification will follow the Semantic Versioning 2.0.0 system. Typically, Patch numbers will address errors in the specification, Minor numbers will add non-breaking functionality while Major numbers will represent large changes to the feature set.
 
-The version of this specification is **1.0.0**.
+The version of this specification is **0.1.0**. It is still in beta.
+
+### Reference Documents
+
+* CSV RFC 4180: https://tools.ietf.org/html/rfc4180
+* Swagger Specification: https://swagger.io/specification/
+* ABNF RFC 2234: https://tools.ietf.org/html/rfc2234
 
 ### Concepts
 
@@ -23,29 +29,47 @@ The version of this specification is **1.0.0**.
 | Reference | Pointer to another record in the payload. |
 | Instance | An unit of data that conforms to a Type, Primitive or an Array. |
 | Record | A logical unit of data, expressing types, instances, arrays or comments. Record is a set of Fields. |
-| Payload | A complete package of data, containing Types, Comments, Instances, Arrays, Primites arranged as per the rules and conventions of CSN defined in this document. |
 
 ## Specification
 
-This section explains how data is structured/ organized in the CSN format. It follows a top-down approach, as it will introduce the largest concepts first, and then go on to the smaller ones.
+This section explains how data is structured/ organized in the CSN format. It follows a top-down approach, as it will introduce the larger concepts first, and then go on to the smaller ones.
 
 ### Payload
 
-**Payload is a set of Records**
+**Payload is a set of Records.**
+
+Payload basically is the complete data set that is being exchanged between two systems. Information in a Payload is arranged and structured according to the rules and conventions defined in this document. 
+
+All information is organized into records. There are 4 types of Records:
+* Version Record
+* Type Definition (TypeDef) Record
+* Array Definition (ArrayDef) Record
+* Instance Record
+
+Rules:
+* Consecutive records must be separated by the 'line feed' (\n) character.
+* Last record must not end with the 'line feed' character.
+* The first record must be a Version record.
+* Second record onwards, there can be 
+  * Zero or more TypeDef records,
+  * Zero or more ArrayDef records, and
+  * Zero or more Instance Records.
 
 Eg:
 ```
-Record
-Record
+V0,'1.0.0'
+T1,'Person','FirstName','LastName'
+A2,'Numbers',PI
+I3,T1,'1','1'
+I4,T1,'2','2'
+I5,A2,100,200
 ```
-
-Rules:
-* Consecutive records are separated by the 'new line' (\n) character.
-* Last Record must not end with the 'new line' character.
 
 ### Record
 
-**Record is a set of Fields.**
+**A Record is a set of Fields.**
+
+A Record is a single logical unit of data. It consist of a set of values, with each value recorded in a Field.
 
 Eg:
 ```
@@ -59,7 +83,7 @@ Rules:
   * Version
   * Type Definition (TypeDef)
   * Array Definition (ArrayDef)
-  * Instance (Data)
+  * Instance
 * All 'Type' and 'Array' records must the defined before they are used in an other Type, Array or Instance records.
 * The first two fields of each record are special as they provide more meaningful information about the record.
   * The first field indicates the type of that record. This field is called the Record Code. It consists of an alphabetic code followed by a Sequence Number.
@@ -188,21 +212,84 @@ Eg:
 ```
 ```
 
-Both Primitive Type and References define an explicit set of rules, described in the next section.
+Rules
+* Fields can not contain a 'comma' or a 'new line' character, except for the string type where such characters can be 'escaped'.
+* Additional rules for Primitive Types and References are given in the following section.
 
 #### Primitive Types
 
-* Fields which contain a value of one of the Primitive Types can not contain a 'comma' or a 'new line' character, except for the string type. Additional rules for each Primitive Type are given later in the document.
+Primitive Types are the basic data types supported in the CSN notation for representing data, information and values. The supported Primitive Types are:
+* String
+* Boolean
+* (Real) Number
+* (Long) Integer
+* DateTime
 
 ##### String
 
+**A String Type can store any literal value that is supported by the character set.**
+
+Rules:
+* String values must always be enclosed in Single Quotes (').
+* Within the single quotes, a string field can contain the comma and the new line characters.
+* String values can contain the following characters in an escaped manner:
+
+| Character | Escape |
+| --- | --- |
+| `'` (single quote) | `\'` | 
+| `\` (back slash) | `\\` |
+
 ##### Boolean
+
+**A Boolean type reflects a True or a False value.**
+
+Rules:
+* A 'true' value is indicated with the character 'Y' (without the quotes).
+* A 'false' value is indicated with the character 'N' (without the quotes).
 
 ##### Floating Point Number
 
+**A Floating Point Number can represent any numerical value.**
+
+Rules:
+* Use a period (.) for a decimal separator.
+* No thousand separators.
+* Use hyphen/ minus character for negative numbers.
+* Exponentiation formats are not yet supported.
+
 ##### Integer
+
+**An Integer represents numbers without fractions.**
+
+Rules:
+* Integer doesn't use a decimal or a thousand separator.
+* Use hyphen/ minus character for negative numbers.
+
+##### DateTime
+
+**A DateTime value represents a date and time.**
+
+Rules:
+* Timestamp values must start with the character 'D'.
+* This must be followed by a date and time value in the ISO 8601 Format.
+* The date and time must be expressed in the 'basic' format expressed as 'YYYYMMDDThhmmss.sss±hhmm' for localized time, or as 'YYYYMMDDThhmmss.sssZ' for UTC time.
 
 #### Reference
 
-* Fields which point to another record must do so by referring to the Sequence Number of such record, prefixed with the '#' character.
+**References are pointers to other records in the Payload.**
+
+References can reduce redundancy in the Payload.
+
+Rules:
+
+* Reference values start with the '#' character.
+* This is immediately followed by the Sequence Number of the target record which is being referenced.
+
+## ABNF Notation:
+
+```
+Payload = VersionRecord *(LF NonVersionRecord)
+LF = Line Feed Character
+NonVersionRecord = (TypeDefRecord / ArrayDefRecord / InstanceRecord)
+```
 
