@@ -33,8 +33,8 @@ Following CSN sample is used throughout the document:
 ```
 V0,"0.1.0"
 T1,"Person","FirstName","LastName"
-I2,#1,"1","1"
-I3,#1,"2","2"
+I2,#1,"Bat","Man"
+I3,#1,"Iron","Man"
 A4,#1,#2,#3
 A5,PI,100,200
 ```
@@ -185,6 +185,17 @@ To present an Array of primitive types, Primitive Codes must be used.
 | String | PS |
 | Real Number | PF |
 | Integer | PI |
+
+### Null (Missing) Values
+
+If some values are missing in an Instance Record, they can be left blank. This is similar to the concept of "null" in several platforms and programming languages.
+
+Eg: Null fields in the middle and at the end of a Record.
+```
+V0,"0.1.0"
+T1,"NullCheck","Null1","NotNull","Null2"
+I2,#1,,"not null",
+```
 
 ## ABNF Notation:
 
