@@ -87,6 +87,7 @@ In order to correctly identify the type of data stored in the Record, as well as
 * A Sequence Number which is a unique identifier.
 
 _Alphabetic Codes_ reveal the type of record. Particularly in implementation, the Alphabetic Code will aid in setting up parsers for efficient execution. Following are the allowed alphabetic codes for each type of Record:
+
 | Alphabet | Description |
 | --- | --- |
 | V | Version |
@@ -109,46 +110,12 @@ Primitives are the basic data types for presenting values and information. There
 
 | Primitive Type | Description & Rules |
 | --- | --- |
-| Boolean | Indicate True or False value<br>
-<ul><li>A 'true' value is indicated with the character 'Y' (without the quotes).</li>
-<li>A 'false' value is indicated with the character 'N' (without the quotes).</li></ul> |
-
-_DateTime_ value represents a date and time.
-
-Rules:
-* DateTime values must start with the character 'D'.
-* This must be followed by a date and time value in the ISO 8601 Format.
-* The date and time must be expressed in the 'basic' format expressed as 'YYYYMMDDThhmmss.sss±hhmm' for localized time, or as 'YYYYMMDDThhmmss.sssZ' for UTC time.
-
-_String_ type can store any literal value that is supported by the character set.
-
-Rules:
-* String values must always be enclosed in Double Quotes (").
-* Within the quotes, a string field can contain the comma and the new line characters, as they wouldn't affect the Payload Structure.
-* String values can contain the following characters in an escaped manner:
-
-| Character | Escape |
-| --- | --- |
-| `'` (single quote) | `\'` | 
-| `\` (back slash) | `\\` |
-
-
-_Floating Point Number_ can represent any numerical value, including fractions.
-
-Rules:
-* Use a period (.) for a decimal separator.
-* There must be no thousand separators in the number.
-* Use hyphen/ minus character for negative numbers at the beginning of the number.
-* Exponentiation formats are not yet supported.
-
-
-_Integer_
-
-An Integer represents numbers without fractions.
-
-Rules:
-* Integer must not have a decimal or a thousand separator.
-* Use hyphen/ minus character for negative numbers.
+| Boolean | <p>Indicate True or False value</p><ul><li>A 'true' value is indicated with the character 'Y' (without the quotes).</li><li>A 'false' value is indicated with the character 'N' (without the quotes).</li></ul> |
+| DateTime | <p>Represents a date and time</p><ul><li>DateTime values must start with the character 'D'.</li><li>This must be followed by a date and time value in the ISO 8601 Format.</li><li>The date and time must be expressed in the 'basic' format expressed as 'YYYYMMDDThhmmss.sss±hhmm' for localized time, or as 'YYYYMMDDThhmmss.sssZ' for UTC time.</li></ul> |
+| String | <p>Any literal value that is supported by the character set.</p><ul><li>String values must always be enclosed in Double Quotes (").</li><li>Within the quotes, a string field can contain the comma and the new line characters, as they wouldn't affect the Payload Structure.</li><li>String values can contain the following characters by using a backslash for escaping:<ul><li>&quot; (double quote)</li><li>`\` (back slash)</li></ul></li></ul> |
+| Real Number | <p>Represent any numerical value, including fractions.</p><ul><li>Use a period (.) for a decimal separator.
+</li><li>There must be no thousand separators in the number.</li><li>Use hyphen/ minus character for negative numbers at the beginning of the number.</li><li>Exponentiation formats are not yet supported.</li></ul> |
+| Integer | <p>Represent numbers without fractions.</p><ul><li>Integer must not have a decimal or a thousand separator.</li><li>Use hyphen/ minus character for negative numbers.</li></ul> |
 
 ### Version Record
 
