@@ -139,6 +139,7 @@ Rules:
 * The second field specifies a human readable name for this TypeDef.
 * Members of the Type are listed from the third field onwards.
 * The Type name (second field) as well its members (following the second field) are of the data type 'string'.
+* A TypeDef Record must be defined before it is Referenced in a Payload.
 
 In the above sample, the second line defines a type called 'Person'.
 
@@ -172,69 +173,6 @@ Rules:
 
 In the above sample, A4 is an array of Instances while A5 is an Array of Integers.
 
-###
-
-Since the first record is always a Version Record, its Sequence Number is always '0', and hence its Record Code is always 'V0'.
-
-Eg:
-```
-V0,'0.1.0'
-T1,'Person','FirstName','LastName'
-I2,#1,'1','1'
-I3,#1,'2','2'
-A4,#1,#2,#3
-```
-
-
-
-
-### ###
-
-* All 'TypeDef' records must the defined before they are used in any Array or Instance Records.
-* The first two fields of each record are special as they provide more meaningful information about the record.
-* The first field indicates the type of that record. This field is called the Record Code. It consists of an Alphabetic Code followed by a Sequence Number.
-* The second field contains information specific to the record itself. More information about this field will be specified with each record type.
-
-The Record 'V0' (which is the first line) consists of 2 Fields.
-
-### Record Types
-
-
-
-Additional Rules for Payloads:
-* Second record onwards, there can be 
-  * Zero or more TypeDef records,
-  * Zero or more Array records, and
-  * Zero or more Instance records.
-* All 'TypeDef' records must the defined before they are used in any Array or Instance Records.
-
-
-
-### Record Codes
-
-As described above, a Record Code is a unique identifier for the Record and its Type. 
-
-
-### Field
-
-
-Eg:
-```
-V0,'0.1.0'
-T1,'Person','FirstName','LastName'
-I2,#1,'1','1'
-I3,#1,'2','2'
-A4,#1,#2,#3
-```
-
-Rules
-* Additional rules for Primitive Types and References are given in the following section.
-
-
-
-#### Reference
-
-
 ## ABNF Notation:
 
 ```
@@ -247,4 +185,3 @@ VersionString = "'0.1.0'"
 
 NonVersionRecord = (TypeDef / Array / Instance)
 ```
-
