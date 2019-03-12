@@ -20,9 +20,8 @@ The version of this specification is **0.1.0**.
 
 ## The CSN Format
 
-### Concepts
+### Basic Concepts & Sample
 
-This section does a quick overview of some concepts, to help better understand this document.
 
 | Concept | Description |
 | --- | --- |
@@ -30,14 +29,12 @@ This section does a quick overview of some concepts, to help better understand t
 | Record | A Record is a set of related Fields, that form one logical unit of information. |
 | Payload | A Payload is a set of Records, which collectively represent the complete dataset/ information that is being exchanged between the systems. |
 
-### Sample
-
-Following CSN sample is used for the explanation of several of the concepts:
+Following CSN sample is used throughout the document:
 ```
-V0,'0.1.0'
-T1,'Person','FirstName','LastName'
-I2,#1,'1','1'
-I3,#1,'2','2'
+V0,"0.1.0"
+T1,"Person","FirstName","LastName"
+I2,#1,"1","1"
+I3,#1,"2","2"
 A4,#1,#2,#3
 A5,PI,100,200
 ```
@@ -86,7 +83,7 @@ In order to correctly identify the type of data stored in the Record, as well as
 * An Alphabetic code which identifies the type of record, and
 * A Sequence Number which is a unique identifier.
 
-_Alphabetic Codes_ reveal the type of record. Particularly in implementation, the Alphabetic Code will aid in setting up parsers for efficient execution. Following are the allowed alphabetic codes for each type of Record:
+**Alphabetic Codes** reveal the type of record. Particularly in implementation, the Alphabetic Code will aid in setting up parsers for efficient execution. Following are the allowed alphabetic codes for each type of Record:
 
 | Alphabet | Description |
 | --- | --- |
@@ -95,9 +92,9 @@ _Alphabetic Codes_ reveal the type of record. Particularly in implementation, th
 | A | Array |
 | I | Instance |
 
-_Sequence Number_ is a numbering system used to create unique identifiers for each Record within a Payload. Sequence Numbers are integers. They start with 0 and increment by 1 for each successive record.
+**Sequence Number** is a numbering system used to create unique identifiers for each Record within a Payload. Sequence Numbers are integers. They start with 0 and increment by 1 for each successive record.
 
-_References_ are pointers to other records in the Payload. References can reduce redundancy in the Payload. They can help to easily overcome cyclical references within data. References use the Sequence Number to point to specific Records within the Payload.
+**References** are pointers to other records in the Payload. References can reduce redundancy in the Payload. They can help to easily overcome cyclical references within data. References use the Sequence Number to point to specific Records within the Payload.
 
 Rules for References:
 * Reference values start with the '#' character.
@@ -108,31 +105,37 @@ Rules for References:
 
 Primitives are the basic data types for presenting values and information. There are additional rules and conventions for representing the values.
 
-| Primitive Type | Description & Rules |
+| Primitive | Description & Rules |
 | --- | --- |
-| Boolean | <p>Indicate True or False value</p><ul><li>A 'true' value is indicated with the character 'Y' (without the quotes).</li><li>A 'false' value is indicated with the character 'N' (without the quotes).</li></ul> |
+| Boolean | <p>Indicate True or False value</p><ul><li>A 'true' value is indicated with the character 'T' (without the quotes).</li><li>A 'false' value is indicated with the character 'F' (without the quotes).</li></ul> |
 | DateTime | <p>Represents a date and time</p><ul><li>DateTime values must start with the character 'D'.</li><li>This must be followed by a date and time value in the ISO 8601 Format.</li><li>The date and time must be expressed in the 'basic' format expressed as 'YYYYMMDDThhmmss.sss±hhmm' for localized time, or as 'YYYYMMDDThhmmss.sssZ' for UTC time.</li></ul> |
 | String | <p>Any literal value that is supported by the character set.</p><ul><li>String values must always be enclosed in Double Quotes (").</li><li>Within the quotes, a string field can contain the comma and the new line characters, as they wouldn't affect the Payload Structure.</li><li>String values can contain the following characters by using a backslash for escaping:<ul><li>&quot; (double quote)</li><li>`\` (back slash)</li></ul></li></ul> |
-| Real Number | <p>Represent any numerical value, including fractions.</p><ul><li>Use a period (.) for a decimal separator.
-</li><li>There must be no thousand separators in the number.</li><li>Use hyphen/ minus character for negative numbers at the beginning of the number.</li><li>Exponentiation formats are not yet supported.</li></ul> |
+| Real Number | <p>Represent any numerical value, including fractions.</p><ul><li>Use a period (.) for a decimal separator.</li><li>There must be no thousand separators in the number.</li><li>Use hyphen/ minus character for negative numbers at the beginning of the number.</li><li>Exponentiation formats are not yet supported.</li></ul> |
 | Integer | <p>Represent numbers without fractions.</p><ul><li>Integer must not have a decimal or a thousand separator.</li><li>Use hyphen/ minus character for negative numbers.</li></ul> |
+
+Sample with all Primitives:
+```
+V0,"0.1.0"
+T1,"AllPrimitives","BooleanTrue","BooleanFalse","DateTime","String","Real","Integer"
+I2,#1,T,F,D20190312T192433.567Z,"Label",-123.45,345
+```
 
 ### Version Record
 
-A _Version Record_ specifies which CSN Standard this document adheres to. The Version Record is the metadata about the Payload.
+A Version Record specifies which CSN Standard this document adheres to. The Version Record is the metadata about the Payload.
 
 Rules:
 * A Version Record is the first record of the Payload.
 * There can be only one Version record in a Payload.
-* A Version Record contains exactly 2 fields.
-  * Its Record Code is always "V0" (without the quotes).
-  * The second field states the version of the CSN specification.
+* A Version Record contains exactly 2 fields:
+  * Its Record Code is always "V0" (without the quotes) as it is always the first record of a Payload.
+  * The second field states the version of the CSN specification as a string type.
 
 In the above sample, the first line is the Version Record.
 
 ### TypeDef Record
 
-A _TypeDef Record_ is a template which lists the labels/ names for the Fields.
+A TypeDef Record is a template which lists the labels/ names for the Fields.
 
 Rules:
 * The first field Record Code starts with Alphabetic Code 'T' followed by the Sequence Number.
@@ -145,7 +148,7 @@ In the above sample, the second line defines a type called 'Person'.
 
 ### Instance Record
 
-An _Instance Record_ is an actual data record containing relevant and important values.
+An Instance Record is an actual data record containing relevant and important values.
 
 Rules:
 * The first field Record Code starts with Alphabetic Code 'I' followed by the Sequence Number.
@@ -173,6 +176,16 @@ Rules:
 
 In the above sample, A4 is an array of Instances while A5 is an Array of Integers.
 
+To present an Array of primitive types, Primitive Codes must be used.
+
+| Primitive Type | Primitive Code |
+| --- | --- |
+| Boolean | PB |
+| DateTime | PD |
+| String | PS |
+| Real Number | PF |
+| Integer | PI |
+
 ## ABNF Notation:
 
 ```
@@ -181,7 +194,7 @@ Payload = VersionRecord *(LF NonVersionRecord)
 VersionRecord = VersionRecordCode FieldSep VersionString
 FieldSep = ","
 VersionRecordCode = "V0"
-VersionString = "'0.1.0'"
+VersionString = "0.1.0"
 
 NonVersionRecord = (TypeDef / Array / Instance)
 ```
