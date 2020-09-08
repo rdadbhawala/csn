@@ -179,13 +179,41 @@ The CSN Specification is strict about the syntax, but not so much about the sema
 
 ## ABNF Notation:
 
+Below is a very crude ABNF notation of the format.
+
 ```
-Payload = VersionRecord *(LF NonVersionRecord)
+Payload = VersionRecord *(RecordSep NonVersionRecord)
 
-VersionRecord = VersionRecordCode FieldSep VersionString
+RecordSep = LF
+
+VersionRecord = VersionSequenceNo FieldSep VersionString
+VersionSequenceNo = "0"
+VersionString = "0.2.0"
 FieldSep = ","
-VersionRecordCode = "V0"
-VersionString = "0.1.0"
 
-NonVersionRecord = (TypeDef / Array / Instance)
+NonVersionRecord = (TypeDefRecord / ArrayRecord / InstanceRecord)
+
+TypeDefRecord = SequenceNo FieldSep Reference Members
+SequenceNo = 1*(DIGIT)
+Reference = "#" SequenceNo
+Members = *(FieldSep Member)
+Member = String
+DataFields = FieldSep Field
+
+Field = (BoolTrue / BoolFalse / String / Integer / RealNumber / DateTime / Reference / Null)
+BoolTrue = T
+BoolFalse = F
+Integer = 1*(DIGIT)
+RealNumber = 1*(DIGIT) DOT 1*(DIGIT)
+DOT = "."
+Null = ""
+DateTime = "D" DateTimeYear DateTimeMonth DateTimeDay "T" DateTimeHour DateTimeMinute DateTimeSeconds DateTimeMilliSeconds
+DateTimeYear = 4(DIGIT)
+DateTimeMonth = 2(DIGIT)
+DateTimeDay = 2(DIGIT)
+DateTimeHour = 2(DIGIT)
+DateTimeMinute = 2(DIGIT)
+DateTimeSeconds = 2(DIGIT)
+DateTimeMilliSeconds = 3(DIGIT)
+
 ```
